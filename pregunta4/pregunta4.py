@@ -12,21 +12,21 @@ import pandas as pd
 ar = pd.read_csv("ruta.csv", sep = ';')
 
 distances = ar.to_numpy()
-NUMBER_OF_CITIES = len(distances)
+NUMERO_DE_CIUDADES = len(distances)
 
 
-# 3. SETUP THE GENETIC ALGORITHM
+# 3. Configuramos el algoritmo genetico con los respectivos parametros
 creator.create("FitnessMin", base.Fitness, weights=(-1.0, ))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 
 toolbox = base.Toolbox()
 
-toolbox.register ("indices", random.sample, range(NUMBER_OF_CITIES), NUMBER_OF_CITIES) ## permutation setup for indiviual
+toolbox.register ("indices", random.sample, range(NUMERO_DE_CIUDADES), NUMERO_DE_CIUDADES) ## permutation setup for indiviual
 toolbox.register ("individual", tools.initIterate, creator.Individual, toolbox.indices)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-# 4. FITNESS, MATE, MUTATE METHODS
-def EVALUATE (individual):
+# 4. Creamos el metodo de evaluacion para cada individuo
+def EVALUACION (individual):
   summation = 0
   start = individual[0]
   for i in range (1, len(individual)):
@@ -35,7 +35,7 @@ def EVALUATE (individual):
     start = end
   return summation,
   
-toolbox.register("evaluate", EVALUATE)
+toolbox.register("evaluate", EVALUACION)
 toolbox.register("mate", tools.cxOrdered ) #cxOrdered es otra forma o cxPartialyMatched
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.02)
 toolbox.register("select", tools.selTournament, tournsize=3)
@@ -51,15 +51,15 @@ def main (seed = 0):
   stats.register("Min", np.min)
   stats.register("Max", np.max)
 
-  algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.5, ngen=10, stats=stats, halloffame=hof,verbose=True)
+  algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.5, ngen=100, stats=stats, halloffame=hof,verbose=True)
   
   return pop, stats, hof
 
 def calculateCost (ar):
   ans = 0
-  for i in range(NUMBER_OF_CITIES-1):
+  for i in range(NUMERO_DE_CIUDADES-1):
     a = ar[i]
-    b = ar[(i+1)%NUMBER_OF_CITIES]
+    b = ar[(i+1)%NUMERO_DE_CIUDADES]
     print(a+1,b+1,distances[a][b])
     ans += (distances[a][b])
   return ans
